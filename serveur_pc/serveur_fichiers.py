@@ -1,4 +1,9 @@
 import socket
+import os
+
+# Création du dossier pour les données brutes
+DOSSIER_RECEPTION = "donnees_brutes"
+os.makedirs(DOSSIER_RECEPTION, exist_ok=True)
 
 TCP_IP = "0.0.0.0" # Écoute sur toutes les adresses
 TCP_PORT = 5005    # Port différent du mode en ligne
@@ -7,7 +12,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((TCP_IP, TCP_PORT))
 sock.listen(1)
 
-print(f" Serveur de fichiers activé sur le port {TCP_PORT}")
+print(f"Serveur de fichiers activé sur le port {TCP_PORT}")
 print("En attente de la montre...")
 
 while True:
@@ -40,11 +45,12 @@ while True:
                 break
             donnees += packet
             
-        # 4. Sauvegarder sur le PC
-        with open(nom_fichier, "wb") as f:
+        # 4. Sauvegarder sur le PC dans le bon dossier
+        chemin_sauvegarde = os.path.join(DOSSIER_RECEPTION, nom_fichier)
+        with open(chemin_sauvegarde, "wb") as f:
             f.write(donnees)
             
-        print(f"Succès ! Fichier sauvegardé ({len(donnees)} octets).")
+        print(f"Fichier sauvegardé dans {chemin_sauvegarde} ({len(donnees)} octets).")
         
     except Exception as e:
         print(f"Erreur: {e}")
