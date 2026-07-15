@@ -54,7 +54,7 @@ The recording is trimmed to keep only the continuous timeframe where $Score(t) >
 #### 1.3 Sliding Windows (Tensor Creation)
 
 The continuous signal is sliced into overlapping fixed-size windows to create the input tensors.
-With a shift step defining a $50\ %$ overlap, an exercise repetition occurring between two timeframes is guaranteed to be fully captured, preserving the chronological sequence required by the neural network.
+With a shift step defining a $50$ % overlap, an exercise repetition occurring between two timeframes is guaranteed to be fully captured, preserving the chronological sequence required by the neural network.
 
 ### 2. Machine Learning Architecture
 
