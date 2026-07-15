@@ -27,7 +27,7 @@ Android sensor events are event-driven, irregular, and highly susceptible to mec
 #### 1.1 Resampling and Filtering
 
 The data is first mathematically resampled using linear interpolation to achieve a constant sampling rate of $f_s = 50 \text{ Hz}$.
-To isolate human motion from mechanical shocks, a 4th-order low-pass Butterworth filter with a cutoff frequency $f_c = 5 \text{ Hz}$ is applied to the signal.
+To isolate human motion from mechanical shocks, a 4th-order low-pass Butterworth filter is applied to the signal.
 
 #### 1.2 Endpoint Detection (Intelligent Cropping)
 
@@ -53,14 +53,14 @@ The recording is trimmed to keep only the continuous timeframe where $Score(t) >
 
 #### 1.3 Sliding Windows (Tensor Creation)
 
-The continuous signal is sliced into overlapping fixed-size windows (e.g., $2 \text{ seconds}$) to create the input tensors.
-With a shift step defining a $50\%$ overlap, an exercise repetition occurring between two timeframes is guaranteed to be fully captured, preserving the chronological sequence required by the neural network.
+The continuous signal is sliced into overlapping fixed-size windows to create the input tensors.
+With a shift step defining a $50\ %$ overlap, an exercise repetition occurring between two timeframes is guaranteed to be fully captured, preserving the chronological sequence required by the neural network.
 
 ### 2. Machine Learning Architecture
 
 The classification of the structured windows is handled by a hybrid **1D CNN + LSTM** Deep Learning architecture.
 
-*   **Feature Extraction (6-layer 1D CNN):** A 6-layer 1D Convolutional Neural Network is applied across the time dimension to automatically extract spatial features and local patterns (e.g., sudden acceleration peaks, smooth deceleration curves) from the 6-channel raw IMU data without manual feature engineering.
+*   **Feature Extraction (1D CNN):** A 1D Convolutional Neural Network is applied across the time dimension to automatically extract spatial features and local patterns (e.g., sudden acceleration peaks, smooth deceleration curves) from the 6-channel raw IMU data without manual feature engineering.
 *   **Temporal Dynamics (LSTM):** Long Short-Term Memory layers process the sequence of features extracted by the CNN. The LSTM is crucial for capturing the chronological evolution of the exercise (differentiating the eccentric phase from the concentric phase).
 *   **Null Class Rejection:** The output layer uses a Softmax activation function. A critical aspect of the training phase is the inclusion of a "Null Class" (Resting/Walking/Random Arm Movements) to act as a noise rejection threshold, preventing false positives when the user is not actively exercising.
 
@@ -69,7 +69,7 @@ The classification of the structured windows is handled by a hybrid **1D CNN + L
 If you have the permission, you will first need to clone the repository:
 
 ```bash
-git clone git@github.com:YourUsername/TrackWatch.git
+git clone git@github.com:AdamBo-cs/TrackWatch.git
 ```
 
 ### 1. PC Configuration
