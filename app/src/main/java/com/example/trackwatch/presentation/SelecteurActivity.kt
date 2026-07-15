@@ -34,6 +34,7 @@ class SelecteurActivity : ComponentActivity() {
         layout.addView(tvTitre)
 
         val exercices = listOf(
+            "Nothing",
             "Squat",
             "RDL",
             "Deadlift",
