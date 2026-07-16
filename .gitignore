@@ -1,8 +1,8 @@
 # --- Dossiers de données (générés et bruts) ---
-donnees_brutes/
-donnees_traitees/
-donnees_trimmed/
-donnees_tensor/
+serveur_pc/donnees_brutes/
+serveur_pc/donnees_traitees/
+serveur_pc/donnees_trimmed/
+serveur_pc/donnees_tensor/
 
 # --- Fichiers de données (fichiers de mesure et tenseurs d'IA) ---
 *.csv
