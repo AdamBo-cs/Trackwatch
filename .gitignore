@@ -1,15 +1,18 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+# --- Dossiers de données (générés et bruts) ---
+donnees_brutes/
+donnees_traitees/
+donnees_trimmed/
+donnees_tensor/
+
+# --- Fichiers de données (fichiers de mesure et tenseurs d'IA) ---
+*.csv
+*.npy
+
+# --- Fichiers système et Python ---
+__pycache__/
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+

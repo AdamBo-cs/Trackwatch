@@ -29,32 +29,28 @@ Android sensor events are event-driven, irregular, and highly susceptible to mec
 The data is first mathematically resampled using linear interpolation to achieve a constant sampling rate of $f_s = 50 \text{ Hz}$.
 To isolate human motion from mechanical shocks, a 4th-order low-pass Butterworth filter is applied to the signal.
 
-#### 1.2 Endpoint Detection (Intelligent Cropping)
+#### 1.2 Endpoint Detection (Disjoint Template Matching)
 
-To prevent the neural network from learning the "rest" or "setup" phases of the recording, the signal is automatically trimmed. We compute the signal magnitude for both sensors:
+To ensure the neural network strictly learns the active phases of an exercise and ignores the "setup" or "rest" periods, the continuous data stream is automatically segmented. First, we compute the signal magnitude (L2-norm) for both sensors to ensure orientation invariance:
 
 $$
 M(t) = \sqrt{X(t)^2 + Y(t)^2 + Z(t)^2}
 $$
 
-We then use a Short-Time Autocorrelation (STAC) algorithm over a sliding window of size $W$ to detect rhythmic movement. The discrete local autocorrelation for a given lag $\tau$ is defined as:
+Instead of relying on standard autocorrelation, we use a **Disjoint Template Matching** algorithm. For a given time $t$, a reference window $W_{ref}$ (e.g., 2 seconds) is extracted. We scan the rest of the signal to find the highest similarity, strictly avoiding any overlapping windows ($W_{test} \cap W_{ref} = \emptyset$). The similarity is calculated using the local Pearson Correlation Coefficient to normalize intensity and remove gravitational bias:
 
 $$
-R(t, \tau) = \sum_{n=t}^{t+W} M(n) \cdot M(n+\tau)
+r = \frac{\sum (W_{ref} - \mu_{ref})(W_{test} - \mu_{test})}{\sqrt{\sum (W_{ref} - \mu_{ref})^2 \sum (W_{test} - \mu_{test})^2}}
 $$
 
-To account for exercises that are either purely linear (Squats) or highly rotational (Bicep Curls), we use a sensor fusion approach. The algorithm calculates the periodicity score for both the accelerometer and the gyroscope, retaining the maximum value:
+To account for exercises that are either purely linear (Squats) or highly rotational (Bicep Curls), we use a sensor fusion approach. The algorithm evaluates the periodicity score for both the accelerometer and the gyroscope, retaining the maximum value:
 
 $$
-Score(t) = \max(R_{acc}(t,\tau), R_{gyr}(t,\tau))
+Score(t) = \max(r_{acc}(t), r_{gyr}(t))
 $$
 
-The recording is trimmed to keep only the continuous timeframe where $Score(t) > \text{Threshold}$.
+The recording is trimmed to keep only the continuous timeframe where $Score(t) > \text{Threshold}$ (with added safety padding) to ensure the neural network only learns from active, rhythmic repetitions.
 
-#### 1.3 Sliding Windows (Tensor Creation)
-
-The continuous signal is sliced into overlapping fixed-size windows to create the input tensors.
-With a shift step defining a $50$ % overlap, an exercise repetition occurring between two timeframes is guaranteed to be fully captured, preserving the chronological sequence required by the neural network.
 
 ### 2. Machine Learning Architecture
 
@@ -126,11 +122,11 @@ python serveur_pc/serveur_fichiers.py
 *   [x] **Objective 2: Signal Processing Pipeline**
     *   Interpolation to constant timestamp steps (50 Hz)
     *   Low-pass filtering to remove sensor noise
-    *   Automated STAC cropping using sensor fusion
-    *   Overlapping sliding windows for tensor creation
-*   [ ] **Objective 3: Repetition Counting via Autocorrelation**
-    *   Implementation of continuous rhythm analysis to extract repetition periods
-    *   Replacing discrete state machines with mathematical STAC evaluation
+    *   Automated endpoint detection using disjoint template matching
+    *   Overlapping sliding windows for 3D tensor creation
+*   [ ] **Objective 3: Repetition Counting via Peak Detection**
+    *   Implementation of targeted 1D peak detection on the dominant axis
+    *   Algorithm integration alongside the classifier's output state
 *   [ ] **Objective 4: Artificial Intelligence Implementation**
     *   Creation of a "Null Class" (Rest/Walking) to prevent false positives
     *   Development and training of a 1D CNN
