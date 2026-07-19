@@ -8,7 +8,7 @@ DOSSIER_ENTREE = 'donnees_brutes'
 
 # Création du dossier de sortie s'il n'existe pas
 
-NOM_FICHIER = 'Curlbiceps_20260714_132222.csv'
+NOM_FICHIER = 'Pecfly_20260717_110250.csv'
 CHEMIN_ENTREE = os.path.join(DOSSIER_ENTREE, NOM_FICHIER)
 
 

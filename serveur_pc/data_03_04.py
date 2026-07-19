@@ -3,8 +3,8 @@ import numpy as np
 import os
 
 DOSSIER_SCRIPT = os.path.dirname(os.path.abspath(__file__))
-DOSSIER_TRAITE = 'donnees_trimmed'
-DOSSIER_SORTIE='donnees_tensor'
+DOSSIER_TRAITE = '03_donnees_trimmed'
+DOSSIER_SORTIE='04_donnees_tensor'
 NOM_FICHIER = 'Curlbiceps_20260714_132222_train_trimmed.csv'
 
 FICHIER_ENTREE = os.path.join(DOSSIER_TRAITE, NOM_FICHIER)
@@ -18,12 +18,12 @@ FICHIER_SORTIE_Y = os.path.join(DOSSIER_SCRIPT, DOSSIER_SORTIE, nom_fichier_sort
 
 
 FREQUENCE = 50.0  
-TAILLE_FENETRE_SEC = 2.0      # W_L = 2 secondes
+TAILLE_FENETRE_SEC = 4.0      # W_L = 2 secondes
 CHEVAUCHEMENT_POURCENT = 0.8  # 80% overlap
 ETIQUETTE_EXERCICE = 1        # Classe cible
 
 if not os.path.exists(FICHIER_ENTREE):
-    print(f"❌ Fichier {FICHIER_ENTREE} introuvable.")
+    print(f"Fichier {FICHIER_ENTREE} introuvable.")
     exit()
 
 df = pd.read_csv(FICHIER_ENTREE)
@@ -33,8 +33,8 @@ donnees_brutes = df[colonnes_capteurs].values
 taille_fenetre_pts = int(TAILLE_FENETRE_SEC * FREQUENCE) # 100 points
 pas_avancement_pts = int(taille_fenetre_pts * (1.0 - CHEVAUCHEMENT_POURCENT)) # 20 points
 
-print(f"📏 Dimensions d'une fenêtre : {taille_fenetre_pts} points ({TAILLE_FENETRE_SEC}s)")
-print(f"🔄 Avancement (Shift step)  : {pas_avancement_pts} points ({pas_avancement_pts/FREQUENCE}s)")
+print(f"Dimensions d'une fenêtre : {taille_fenetre_pts} points ({TAILLE_FENETRE_SEC}s)")
+print(f"Avancement (Shift step)  : {pas_avancement_pts} points ({pas_avancement_pts/FREQUENCE}s)")
 
 X = [] 
 Y = [] 
@@ -48,10 +48,10 @@ for debut in range(0, len(donnees_brutes) - taille_fenetre_pts + 1, pas_avanceme
 X_tensor = np.array(X)
 Y_tensor = np.array(Y)
 
-print("\n🎯 Restructuration terminée !")
-print(f"📊 Forme du Tenseur 3D (X) : {X_tensor.shape}")
-print(f"🏷️ Forme du Vecteur Labels (Y) : {Y_tensor.shape}")
+print(" Restructuration terminée !")
+print(f" Forme du Tenseur 3D (X) : {X_tensor.shape}")
+print(f"Forme du Vecteur Labels (Y) : {Y_tensor.shape}")
 
 np.save(FICHIER_SORTIE_X, X_tensor)
 np.save(FICHIER_SORTIE_Y, Y_tensor)
-print(f"✅ Données prêtes pour l'entraînement !")
+print(f"Données prêtes pour l'entraînement !")

@@ -2,7 +2,7 @@ import socket
 import os
 
 # Création du dossier pour les données brutes
-DOSSIER_RECEPTION = "donnees_brutes"
+DOSSIER_RECEPTION = "01_donnees_brutes"
 os.makedirs(DOSSIER_RECEPTION, exist_ok=True)
 
 TCP_IP = "0.0.0.0" # Écoute sur toutes les adresses

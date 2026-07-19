@@ -5,27 +5,27 @@ import os
 
 # --- CONFIGURATION ---
 DOSSIER_SCRIPT = os.path.dirname(os.path.abspath(__file__))
-NOM_FICHIER = 'Curlbiceps_20260714_132222_train.csv'
+NOM_FICHIER = 'Pecfly_20260717_110002_train.csv'
 
 # On colle le nom du dossier et du fichier à ce chemin absolu
-FICHIER_ENTREE = os.path.join(DOSSIER_SCRIPT, 'donnees_traitees', NOM_FICHIER)
+FICHIER_ENTREE = os.path.join(DOSSIER_SCRIPT, '02_donnees_traitees', NOM_FICHIER)
 
 FREQUENCE = 50.0  # 50 Hz
 
 # Renommage automatique : remplace l'extension ou ajoute _trimmed
 nom_sans_extension = os.path.splitext(NOM_FICHIER)[0]
 nom_fichier_sortie = f"{nom_sans_extension}_trimmed.csv"
-FICHIER_SORTIE = os.path.join(DOSSIER_SCRIPT, 'donnees_trimmed', nom_fichier_sortie)
+FICHIER_SORTIE = os.path.join(DOSSIER_SCRIPT, '03_donnees_trimmed', nom_fichier_sortie)
 
 # Paramètres de l'Algorithme (Template Matching)
-TAILLE_FENETRE_SEC = 2.0  
+TAILLE_FENETRE_SEC = 3.0  
 PAS_GLISSEMENT_SEC = 0.1  
-SEUIL_PERIODICITE = 0.7 
+SEUIL_PERIODICITE = 0.85
 SEUIL_ENERGIE_MIN = 0.5 # Pour éviter l'amplification du bruit au repos
 
 # --- 1. CHARGEMENT ET PRÉPARATION ---
 if not os.path.exists(FICHIER_ENTREE):
-    print(f"❌ Fichier {FICHIER_ENTREE} introuvable.")
+    print(f"Fichier {FICHIER_ENTREE} introuvable.")
     print("Vérifiez le nom ou l'emplacement du fichier.")
     exit()
 
@@ -43,8 +43,8 @@ total_pts = len(df)
 temps_stac = []
 scores_stac = []
 
-print(f"📥 Lecture de : {NOM_FICHIER}")
-print("🔄 Calcul par Template Matching (Fenêtres disjointes) en cours...")
+print(f"Lecture de : {NOM_FICHIER}")
+print("Calcul par Template Matching (Fenêtres disjointes) en cours...")
 
 def calculer_score_disjoint(signal, idx_ref):
     """Calcule le score max de Pearson avec toutes les fenêtres disjointes du fichier."""
@@ -118,16 +118,16 @@ if len(zones_actives) > 0:
     debut_serie_sec = max(0, debut_serie_sec - 0.5)
     fin_serie_sec = min(df['Temps_s'].max(), fin_serie_sec + 0.5)
     
-    print(f"✂️ Coupure détectée : de {debut_serie_sec:.1f}s à {fin_serie_sec:.1f}s")
+    print(f"Coupure détectée : de {debut_serie_sec:.1f}s à {fin_serie_sec:.1f}s")
     
     # Création du dossier de sortie s'il n'existe pas
     os.makedirs(os.path.dirname(FICHIER_SORTIE), exist_ok=True)
     
     df_rogne = df[(df['Temps_s'] >= debut_serie_sec) & (df['Temps_s'] <= fin_serie_sec)]
     df_rogne.to_csv(FICHIER_SORTIE, index=False)
-    print(f"✅ Fichier sauvegardé : {nom_fichier_sortie}")
+    print(f"Fichier sauvegardé : {nom_fichier_sortie}")
 else:
-    print("⚠️ Aucune périodicité forte détectée.")
+    print("Aucune périodicité forte détectée.")
     debut_serie_sec, fin_serie_sec = 0, df['Temps_s'].max()
 
 # --- 4. VISUALISATION ---
