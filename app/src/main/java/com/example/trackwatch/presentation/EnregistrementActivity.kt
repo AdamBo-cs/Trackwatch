@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.view.WindowManager
 import android.os.Bundle
 import android.widget.Button
 import android.widget.LinearLayout
@@ -52,6 +53,7 @@ class EnregistrementActivity : ComponentActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
 
         mode = intent.getStringExtra("MODE") ?: "LOCAL"
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         // 1. On récupère le nom de l'exercice cliqué
         exercice = intent.getStringExtra("EXERCICE") ?: "Inconnu"
@@ -176,6 +178,7 @@ class EnregistrementActivity : ComponentActivity(), SensorEventListener {
     }
 
     private fun ArreterEnregistrement() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         sensorManager.unregisterListener(this)
         try {
             fileWriter?.flush()
