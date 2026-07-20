@@ -1,65 +1,70 @@
 package com.example.trackwatch.presentation
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
-import android.widget.Button
+import android.os.CountDownTimer
+import android.view.Gravity
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class DecompteActivity : ComponentActivity() {
-
-    private var chronoJob: Job? = null // Permet de stopper le chrono si on clique sur retour
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val modeChoisi = intent.getStringExtra("MODE")
-        val lettreChoisie = intent.getStringExtra("LETTRE")
-
-        val tvChrono = TextView(this).apply {
-            text = "3"
-            textSize = 40f
-            gravity = android.view.Gravity.CENTER
-        }
-
-        val btnRetour = Button(this).apply {
-            text = "❌ ANNULER"
-            textSize = 11f
-        }
+        val mode = intent.getStringExtra("MODE") ?: "LOCAL"
+        val exercice = intent.getStringExtra("EXERCICE") ?: "Inconnu"
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            gravity = android.view.Gravity.CENTER
-            addView(tvChrono)
-            addView(btnRetour)
+            gravity = Gravity.CENTER
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(Color.parseColor("#121212")) // Fond sombre
         }
+
+        val tvTitre = TextView(this).apply {
+            text = "PRÉPARE-TOI\n$exercice"
+            textSize = 14f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(0, 0, 0, 20)
+        }
+
+        val tvChiffre = TextView(this).apply {
+            text = "3"
+            textSize = 60f
+            typeface = Typeface.DEFAULT_BOLD
+            setTextColor(Color.parseColor("#4CAF50")) // Vert
+            gravity = Gravity.CENTER
+        }
+
+        layout.addView(tvTitre)
+        layout.addView(tvChiffre)
         setContentView(layout)
 
-        btnRetour.setOnClickListener {
-            chronoJob?.cancel() // Arrête le compte à rebours en cours
-            finish() // Ferme l'écran
-        }
+        object : CountDownTimer(3000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                // On rajoute +1 car le compteur de base affiche souvent 2, 1, 0
+                val secondesRestantes = (millisUntilFinished / 1000) + 1
+                tvChiffre.text = secondesRestantes.toString()
+            }
 
-        // Lancement du chrono
-        chronoJob = lifecycleScope.launch {
-            delay(1000)
-            tvChrono.text = "2"
-            delay(1000)
-            tvChrono.text = "1"
-            delay(1000)
-            tvChrono.text = "GO"
-            delay(500)
+            override fun onFinish() {
+                tvChiffre.text = "GO!"
 
-            val intent = Intent(this@DecompteActivity, EnregistrementActivity::class.java)
-            intent.putExtra("MODE", modeChoisi)
-            intent.putExtra("LETTRE", lettreChoisie)
-            startActivity(intent)
-            finish()
-        }
+                val intent = Intent(this@DecompteActivity, EnregistrementActivity::class.java)
+                intent.putExtra("MODE", mode)
+                intent.putExtra("EXERCICE", exercice)
+                startActivity(intent)
+
+                finish()
+            }
+        }.start()
     }
 }
