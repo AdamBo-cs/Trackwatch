@@ -1,0 +1,17 @@
+{
+    "Barbellrow": 0,
+    "Benchpress": 1,
+    "Curlbiceps": 2,
+    "Inclinedbenchpress": 3,
+    "Lateralraise": 4,
+    "Latpulldown": 5,
+    "Militarypress": 6,
+    "Nothing": 7,
+    "Onearmdumbellrow": 8,
+    "Overheadtricepsextension": 9,
+    "Pecfly": 10,
+    "RDL": 11,
+    "Reardelt": 12,
+    "Squat": 13,
+    "Underhandtricepsextension": 14
+}

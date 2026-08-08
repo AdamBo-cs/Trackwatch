@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import android.view.WindowManager // <-- NOUVEL IMPORT À AJOUTER
 
 class DecompteActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         val mode = intent.getStringExtra("MODE") ?: "LOCAL"
         val exercice = intent.getStringExtra("EXERCICE") ?: "Inconnu"
@@ -48,6 +51,7 @@ class DecompteActivity : ComponentActivity() {
         layout.addView(tvChiffre)
         setContentView(layout)
 
+        // Décompte de 3 secondes (3000 ms), met à jour chaque seconde (1000 ms)
         object : CountDownTimer(3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 // On rajoute +1 car le compteur de base affiche souvent 2, 1, 0
@@ -58,11 +62,13 @@ class DecompteActivity : ComponentActivity() {
             override fun onFinish() {
                 tvChiffre.text = "GO!"
 
+                // On passe le relais à l'enregistrement avec les bonnes infos
                 val intent = Intent(this@DecompteActivity, EnregistrementActivity::class.java)
                 intent.putExtra("MODE", mode)
                 intent.putExtra("EXERCICE", exercice)
                 startActivity(intent)
 
+                // L'activité se ferme, le drapeau "écran allumé" sera détruit avec elle
                 finish()
             }
         }.start()

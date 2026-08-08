@@ -34,6 +34,9 @@ def traiter_fichier(nom_fichier):
     df_acc = df[df['SensorType'] == 1].copy()
     df_gyro = df[df['SensorType'] == 4].copy()
 
+    df_acc = df_acc.groupby('Timestamp', as_index=False).mean()
+    df_gyro = df_gyro.groupby('Timestamp', as_index=False).mean()
+    
     df_acc['Time_s'] = (df_acc['Timestamp'] - t0) / 1000.0
     df_gyro['Time_s'] = (df_gyro['Timestamp'] - t0) / 1000.0
 
@@ -59,12 +62,15 @@ def traiter_fichier(nom_fichier):
     acc_x_filtre = filtrer_signal(acc_x, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
     acc_y_filtre = filtrer_signal(acc_y, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
     acc_z_filtre = filtrer_signal(acc_z, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
+    gyr_x_filtre = filtrer_signal(gyr_x, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
+    gyr_y_filtre = filtrer_signal(gyr_y, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
+    gyr_z_filtre = filtrer_signal(gyr_z, FREQUENCE_COUPURE_FILTRE, FREQUENCE_CIBLE)
 
     # Sauvegarde
     df_propre = pd.DataFrame({
         'Temps_s': temps_parfait,
         'Acc_X': acc_x_filtre, 'Acc_Y': acc_y_filtre, 'Acc_Z': acc_z_filtre,
-        'Gyr_X': gyr_x, 'Gyr_Y': gyr_y, 'Gyr_Z': gyr_z
+        'Gyr_X': gyr_x_filtre, 'Gyr_Y': gyr_y_filtre, 'Gyr_Z': gyr_z_filtre
     })
 
     df_propre.to_csv(chemin_sortie, index=False)
