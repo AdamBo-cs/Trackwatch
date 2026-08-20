@@ -9,7 +9,7 @@ DOSSIER_SCRIPT = os.path.dirname(os.path.abspath(__file__))
 # Remplace par le nom exact du dossier où se trouvent tes fichiers
 NOM_DOSSIER = '03_donnees_trimmed' 
 # Remplace par le nom de ton fichier CSV
-NOM_FICHIER = 'Barbellrow_20260718_151903_trimmed.csv'
+NOM_FICHIER = 'Curlbiceps_20260729_132928_trimmed.csv'
 
 CHEMIN_COMPLET = os.path.join(DOSSIER_SCRIPT, NOM_DOSSIER, NOM_FICHIER)
 
